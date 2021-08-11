@@ -3,5 +3,5 @@ import React from 'react';
 import Icon from './icon';
 
 ReactDOM.render(<div>
-  <Icon/>
+  <Icon name="wechat"/>
 </div>, document.querySelector('#root'));
