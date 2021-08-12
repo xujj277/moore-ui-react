@@ -19,9 +19,13 @@ module.exports = {
         loader: 'ts-loader',
         exclude: /node_modules/,
       },
-      {
+      { // webpack 识别 svg
         test: /\.svg$/,
         loader: 'svg-sprite-loader',
+      },
+      {
+        test: /\.scss$/,
+        loader: ['style-loader', 'css-loader', 'sass-loader'],
       }
     ],
   }
