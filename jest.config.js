@@ -6,6 +6,7 @@ module.exports = {
   reporters: ["default"],
   moduleFileExtensions: ['js', 'jsx', 'ts', 'tsx'],
   moduleDirectories: ['node_modules'],
+  testEnvironment: 'jsdom',
   globals: {
     'ts-jest': {
       tsConfig: 'tsconfig.test.json',
