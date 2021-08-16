@@ -1,6 +1,8 @@
 /dist/*
 yarn.lock
 /test-results/
+/coverage/*
+junit.xml
 # Logs
 logs
 *.log
