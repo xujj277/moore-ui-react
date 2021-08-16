@@ -1,13 +1,17 @@
 {
   "name": "moore-ui-react",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "",
   "main": "dist/lib/index",
   "types": "dist/lib/index",
+  "files": [
+    "/dist/**/*"
+  ],
   "scripts": {
     "test": "cross-env NODE_ENV=test jest --config=jest.config.js --runInBand",
     "start": "cross-env NODE_ENV=development webpack-dev-server --config webpack.config.dev.js",
-    "build": "cross-env NODE_ENV=production webpack --config webpack.config.prod.js"
+    "build": "cross-env NODE_ENV=production webpack --config webpack.config.prod.js",
+    "ci": "cross-env NODE_ENV=test JEST_JUNIT_OUTPUT=./test-results/jest/results.xml jest --config=jest.config.js"
   },
   "repository": {
     "type": "git",
@@ -33,9 +37,9 @@
     "cross-env": "^7.0.3",
     "css-loader": "^2.1.1",
     "enzyme": "^3.11.0",
-    "enzyme-adapter-react-16": "1.11.2",
     "html-webpack-plugin": "^3.2.0",
     "jest": "^27.0.6",
+    "jest-junit": "^12.2.0",
     "node-sass": "4.14.1",
     "react-test-renderer": "^17.0.2",
     "sass-loader": "^7.1.0",
