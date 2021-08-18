@@ -1,6 +1,6 @@
 import React, { Fragment, ReactElement } from 'react'
 import './dialog.scss';
-import ReactDom from 'react-dom'
+import ReactDOM from 'react-dom'
 import scopedClassMaker from '../classes'
 import {Icon} from '../index';
 
@@ -43,7 +43,7 @@ const Dialog: React.FunctionComponent<Props> = (props) => {
       </div>
     </Fragment> : null
   return (
-      ReactDom.createPortal(x, document.body)
+      ReactDOM.createPortal(x, document.body)
   )
 }
 
@@ -51,5 +51,20 @@ Dialog.defaultProps = {
   closeOnClickOverlay: false,
   title: '标题'
 };
+
+const openDialog = (content: string) => {
+  const component = <Dialog visible={true} onClose={() => {
+    ReactDOM.render(React.cloneElement(component,{visible: false}), div)
+    ReactDOM.unmountComponentAtNode(div)
+    div.remove()
+  }}>
+    {content}
+  </Dialog>
+  const div = document.createElement('div')
+  document.body.append(div)
+  ReactDOM.render(component, div)
+}
+
+export {openDialog}
 
 export default Dialog
