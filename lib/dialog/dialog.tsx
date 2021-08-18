@@ -1,4 +1,4 @@
-import React, { Fragment, ReactElement } from 'react'
+import React, { Fragment, ReactElement, ReactNode } from 'react'
 import './dialog.scss';
 import ReactDOM from 'react-dom'
 import scopedClassMaker from '../classes'
@@ -10,7 +10,7 @@ interface Props {
   visible: boolean,
   onClose: React.MouseEventHandler,
   closeOnClickOverlay?: boolean,
-  title?: ReactElement | string,
+  title?: ReactNode
   buttons?: Array<ReactElement>
 }
 
@@ -23,8 +23,7 @@ const Dialog: React.FunctionComponent<Props> = (props) => {
       props.onClose(e)
     }
   }
-  console.log(props.buttons)
-  const x = props.visible ? 
+  const result = props.visible && 
     <Fragment>
       <div className={sc('overlay')} onClick={onClickMask}></div>
       <div className={sc('wrapper')}>
@@ -35,15 +34,17 @@ const Dialog: React.FunctionComponent<Props> = (props) => {
               <Icon name="wechat" onClick={onClickClose}/>
             </header>
             <main>{props.children || '内容'}</main>
-            <footer>
-              {props.buttons && props.buttons.map((item, index) => React.cloneElement(item, {key: index}))}
-            </footer>
+            {props.buttons && props.buttons.length > 0 &&
+              <footer>
+                {props.buttons && props.buttons.map((item, index) => React.cloneElement(item, {key: index}))}
+              </footer>
+            }
           </div>
         </div>
       </div>
-    </Fragment> : null
+    </Fragment>
   return (
-      ReactDOM.createPortal(x, document.body)
+      ReactDOM.createPortal(result, document.body)
   )
 }
 
@@ -52,13 +53,27 @@ Dialog.defaultProps = {
   title: '标题'
 };
 
-const openDialog = (options: {closeOnClickOverlay?: boolean, buttons?: Array<ReactElement>, title?: ReactElement | string, content?: ReactElement | string}) => {
-  const {closeOnClickOverlay, buttons, title, content} = options
-  const component = <Dialog visible={true} closeOnClickOverlay={closeOnClickOverlay} buttons={buttons} title={title} onClose={() => {
+const openDialog = (options: {
+  closeOnClickOverlay?: boolean, 
+  buttons?: Array<ReactElement>, 
+  title?: ReactNode,
+  content?: ReactNode,
+  afterClose?: () => void
+}) => {
+  const {closeOnClickOverlay, buttons, title, content, afterClose} = options
+  const close = () => {
     ReactDOM.render(React.cloneElement(component,{visible: false}), div)
     ReactDOM.unmountComponentAtNode(div)
     div.remove()
-  }}>
+  }
+  const component = <Dialog visible={true}
+                            closeOnClickOverlay={closeOnClickOverlay}
+                            buttons={buttons}
+                            title={title}
+                            onClose={() => {
+                              close()
+                              afterClose && afterClose()
+                            }}>
     {content}
   </Dialog>
   const div = document.createElement('div')

@@ -20,7 +20,9 @@ export default function () {
         我是内容
       </Dialog>
       <h1>example 2</h1>
-      <button onClick={() => openDialog({})}>openDialog</button>
+      <button onClick={() => openDialog({content: '123123', afterClose: () => {
+          console.log(111)
+        }})}>openDialog</button>
     </div>
   )
 }
