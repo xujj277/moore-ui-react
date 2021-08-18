@@ -1,8 +1,8 @@
 import React, { Fragment, ReactElement, ReactNode } from 'react'
-import './dialog.scss';
+import './dialog.scss'
 import ReactDOM from 'react-dom'
-import scopedClassMaker from '../classes'
-import {Icon} from '../index';
+import { scopedClassMaker } from '../helpers/classes'
+import { Icon } from '../index'
 
 const sc = scopedClassMaker('moore-dialog')
 
@@ -23,7 +23,7 @@ const Dialog: React.FunctionComponent<Props> = (props) => {
       props.onClose(e)
     }
   }
-  const result = props.visible && 
+  const result = props.visible &&
     <Fragment>
       <div className={sc('overlay')} onClick={onClickMask}></div>
       <div className={sc('wrapper')}>
@@ -35,34 +35,34 @@ const Dialog: React.FunctionComponent<Props> = (props) => {
             </header>
             <main>{props.children || '内容'}</main>
             {props.buttons && props.buttons.length > 0 &&
-              <footer>
-                {props.buttons && props.buttons.map((item, index) => React.cloneElement(item, {key: index}))}
-              </footer>
+            <footer>
+              {props.buttons && props.buttons.map((item, index) => React.cloneElement(item, {key: index}))}
+            </footer>
             }
           </div>
         </div>
       </div>
     </Fragment>
   return (
-      ReactDOM.createPortal(result, document.body)
+    ReactDOM.createPortal(result, document.body)
   )
 }
 
 Dialog.defaultProps = {
   closeOnClickOverlay: false,
   title: '标题'
-};
+}
 
 const openDialog = (options: {
-  closeOnClickOverlay?: boolean, 
-  buttons?: Array<ReactElement>, 
+  closeOnClickOverlay?: boolean,
+  buttons?: Array<ReactElement>,
   title?: ReactNode,
   content?: ReactNode,
   afterClose?: () => void
 }) => {
   const {closeOnClickOverlay, buttons, title, content, afterClose} = options
   const close = () => {
-    ReactDOM.render(React.cloneElement(component,{visible: false}), div)
+    ReactDOM.render(React.cloneElement(component, {visible: false}), div) // 为什么component在后面定义，前面却可以取值
     ReactDOM.unmountComponentAtNode(div)
     div.remove()
   }
@@ -79,8 +79,9 @@ const openDialog = (options: {
   const div = document.createElement('div')
   document.body.append(div)
   ReactDOM.render(component, div)
+  return close // 为什么
 }
 
-export {openDialog}
+export { openDialog }
 
 export default Dialog
