@@ -34,7 +34,7 @@ const Dialog: React.FunctionComponent<Props> = (props) => {
               {props.title}
               <Icon name="wechat" onClick={onClickClose}/>
             </header>
-            <main>{props.children}</main>
+            <main>{props.children || '内容'}</main>
             <footer>
               {props.buttons && props.buttons.map((item, index) => React.cloneElement(item, {key: index}))}
             </footer>
@@ -52,8 +52,9 @@ Dialog.defaultProps = {
   title: '标题'
 };
 
-const openDialog = (content: string) => {
-  const component = <Dialog visible={true} onClose={() => {
+const openDialog = (options: {closeOnClickOverlay?: boolean, buttons?: Array<ReactElement>, title?: ReactElement | string, content?: ReactElement | string}) => {
+  const {closeOnClickOverlay, buttons, title, content} = options
+  const component = <Dialog visible={true} closeOnClickOverlay={closeOnClickOverlay} buttons={buttons} title={title} onClose={() => {
     ReactDOM.render(React.cloneElement(component,{visible: false}), div)
     ReactDOM.unmountComponentAtNode(div)
     div.remove()
