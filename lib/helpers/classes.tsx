@@ -15,19 +15,14 @@ interface ClassToggles {
 function scopedClassMaker(prefix: string) {
   
   return function (name: string | ClassToggles, options?: Object) {
-    const nameObject = (typeof name === 'string' || name === undefined) ? {[name]: name} : name
-    
-    const scoped = Object.entries(nameObject)
+    const scoped = Object.entries(name instanceof Object ? name : {[name] : name})
       .filter(kv => kv[1] !== false)
       .map(v => v[0])
       .map(v => [prefix, v].filter(Boolean).join('-'))
+      .concat(options && options.extra || [])
       .join(' ')
     
-    if (options && options.extra) {
-      return [scoped, options && options.extra].filter(Boolean).join(' ')
-    } else {
       return scoped
-    }
   }
 }
 
