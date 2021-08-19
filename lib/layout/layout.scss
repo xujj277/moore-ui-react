@@ -1,0 +1,20 @@
+.moore-layout {
+  border: 1px solid red;
+  display: flex;
+  flex-direction: column;
+  &.hasAside {
+    flex-direction: row;
+    .moore-layout {
+      flex-direction: column;
+    }
+  }
+  &-content {
+    flex-grow: 1;
+    border: 1px solid green;
+  }
+  & & {
+    flex-grow: 1;
+    border: 1px solid blue;
+    flex-direction: row;
+  }
+} 
