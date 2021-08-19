@@ -4,7 +4,7 @@ function classes (...names:(string|undefined)[]) {
 
 export default classes;
 
-interface Options {
+interface Object {
   extra: string | undefined
 }
 
@@ -13,28 +13,22 @@ interface ClassToggles {
 }
 
 function scopedClassMaker(prefix: string) {
-
-  return function (name: string | ClassToggles, options?: Options) {
-    const namesObject = (typeof name === 'string' || name === undefined) ?
-      {[name]: name} :
-      name;
-
-    const scoped = Object
-      .entries(namesObject)
+  
+  return function (name: string | ClassToggles, options?: Object) {
+    const nameObject = (typeof name === 'string' || name === undefined) ? {[name]: name} : name
+    
+    const scoped = Object.entries(nameObject)
       .filter(kv => kv[1] !== false)
-      .map(kv => kv[0])
-      .map(name => [prefix, name]
-        .filter(Boolean)
-        .join('-'))
-      .join(' ');
-
+      .map(v => v[0])
+      .map(v => [prefix, v].filter(Boolean).join('-'))
+      .join(' ')
+    
     if (options && options.extra) {
-      return [scoped, options && options.extra].filter(Boolean).join(' ');
+      return [scoped, options && options.extra].filter(Boolean).join(' ')
     } else {
-      return scoped;
+      return scoped
     }
-  };
-
+  }
 }
 
 export { scopedClassMaker };

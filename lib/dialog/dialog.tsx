@@ -27,7 +27,7 @@ const Dialog: React.FunctionComponent<Props> = (props) => {
     <Fragment>
       <div className={sc('overlay')} onClick={onClickMask}></div>
       <div className={sc('wrapper')}>
-        <div className={sc()}>
+        <div className={sc('')}>
           <div className={sc('border')}>
             <header>
               {props.title}
