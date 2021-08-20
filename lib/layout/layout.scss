@@ -1,9 +1,6 @@
 .moore-layout {
   display: flex;
   flex-direction: column;
-  &-content {
-    flex-grow: 1;
-  }
   & & {
     flex-grow: 1;
     flex-direction: row;
@@ -12,6 +9,12 @@
     flex-direction: row;
     .moore-layout {
       flex-direction: column;
+    }
+  }
+  &-content {
+    flex-grow: 1;
+    .moore-layout-hasAside {
+      flex-direction: row;
     }
   }
 }
