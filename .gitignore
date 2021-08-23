@@ -2,6 +2,7 @@
 yarn.lock
 /test-results/
 /coverage/*
+/doc/
 junit.xml
 # Logs
 logs

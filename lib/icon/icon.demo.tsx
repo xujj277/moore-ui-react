@@ -1,14 +1,18 @@
-import React from 'react';
-import IconExample from './icon.example';
+import React, { Fragment } from 'react';
+import IconExample1 from './icon.example.1';
 import Demo from '../../demo'
+import IconExample2 from './icon.example.2';
 
 const IconDemo = () => {
   return (
-    <div>
-      <Demo code={require('!!raw-loader!./icon.example.tsx').default}>
-        <IconExample></IconExample>
+    <Fragment>
+      <Demo code={require('!!raw-loader!./icon.example.1.tsx').default}>
+        <IconExample1></IconExample1>
       </Demo>
-    </div>
+      <Demo code={require('!!raw-loader!./icon.example.2.tsx').default}>
+        <IconExample2></IconExample2>
+      </Demo>
+    </Fragment>
   );
 };
 
