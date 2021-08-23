@@ -26,10 +26,7 @@ const Demo: React.FunctionComponent<Props> = (props) => {
         {props.children}
       </div>
       <div>
-        <button onClick={() => {
-          setCodeVisible(!codeVisible)
-          console.log(223123123, codeVisible)
-        }}>查看代码</button>
+        <button onClick={() => setCodeVisible(!codeVisible)}>查看代码</button>
         {codeVisible && code}
       </div>
     </div>
