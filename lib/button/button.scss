@@ -1,0 +1,191 @@
+$h: 32px;
+$border-color: #fff;
+$color: #fff;
+$radius: 8px;
+$red: #e99779;
+$grey: #e8dcc4;
+$active-color: #3a8ee6;
+$primary-blue: #97cbe3;
+$primary-border-color: #b7c4ba;
+
+.moore-button {
+  box-sizing: border-box;
+  height: $h;
+  padding: 0 16px;
+  cursor: pointer;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  white-space: nowrap;
+  background: #f7d06f;
+  color: $color;
+  border: 2px solid $border-color;
+  border-radius: $radius;
+  box-shadow: 0 1px 0 fade-out(black, 0.95);
+  transition: background 250ms;
+  -webkit-user-select: none;/*禁用手机浏览器的用户选择功能 */
+  -moz-user-select: none;
+
+  position: relative;
+
+  & + & {
+    margin-left: 8px;
+  }
+
+  &.moore-icon-right {
+    .moore-button-content {
+      order: 1;
+    }
+    .moore-icon {
+      order: 2;
+      margin-left: 4px;
+    }
+  }
+
+  &.moore-icon-left {
+    .moore-button-content {
+      order: 2;
+    }
+    .moore-icon {
+      order: 1;
+      margin-right: 4px;
+    }
+  }
+  &-wave {
+    &::before {
+      height: $h;
+      border: none;
+      border-radius: $radius;
+      position: absolute;
+      content: '';
+      left: 0;
+      right: 0;
+      top: -1px;
+      bottom: 0;
+
+      box-shadow: 0 0 0 10px transparent;
+      animation: x-switch-pulse 1s;
+    }
+
+    &:active::before {
+      animation: none;
+    }
+  }
+
+  &:hover,
+  &:focus {
+    background: darken(#f5d68a, 25%);
+  }
+  &:active {
+    background: #c1a157;
+    outline: none;
+  }
+  &:focus {
+    outline: none;
+  }
+  &::-moz-focus-inner {
+    border: 0;
+  }
+  &.moore-theme-primary {
+    background: $primary-blue;
+    color: #fff;
+
+    &:hover,
+    &:focus {
+      background: darken($primary-blue, 25%);
+    }
+
+    &:active {
+      background: darken($primary-blue, 30%);
+    }
+
+    &[disabled] {
+      color: #fff;
+      background: lighten($primary-blue, 5%);
+    }
+  }
+  &.moore-theme-danger {
+    background: $red;
+    color: white;
+    &:hover,
+    &:focus {
+      background: darken($red, 25%);
+    }
+
+    &:active {
+      background: darken($red, 30%);
+    }
+
+    &[disabled] {
+      color: white;
+      background: lighten($red, 10%);
+    }
+  }
+  &.moore-theme-link {
+    border-color: transparent;
+    box-shadow: none;
+    color: inherit;
+    background: #e8dcc4;
+    &:hover,
+    &:focus {
+      background-color: transparent;
+    }
+  }
+  &.moore-theme-text {
+    border-color: transparent;
+    box-shadow: none;
+    color: inherit;
+    background: #e8dcc4;
+
+    &:hover,
+    &:focus {
+      background: darken(#e8dcc4, 5%);
+    }
+  }
+  &.moore-size-big {
+    font-size: 24px;
+    height: 48px;
+    padding: 0 16px;
+  }
+  &.moore-size-small {
+    font-size: 12px;
+    height: 24px;
+    padding: 2px 4px;
+  }
+  &.moore-theme-button {
+    &[disabled] {
+      background-color: #d8d8d8;
+    }
+  }
+  &.moore-theme-link, &.moore-theme-text {
+    &[disabled] {
+      cursor: not-allowed;
+      color: inherit;
+      background-color: transparent;
+    }
+  }
+
+  &[disabled] {
+    cursor: not-allowed;
+    color: #fff;
+  }
+
+  &.moore-loading {
+    pointer-events: none;
+  }
+  > .moore-button-loadingIndicator{
+    width: 14px;
+    height: 14px;
+    display: inline-block;
+    margin-right: 4px;
+    border-radius: 8px;
+    border-color: #fff #fff #fff transparent;
+    border-style: solid;
+    border-width: 2px;
+    animation: moore-spin 1s infinite linear;
+  }
+}
+@keyframes moore-spin {
+  0%{transform: rotate(0deg)}
+  100%{transform: rotate(360deg)}
+}
