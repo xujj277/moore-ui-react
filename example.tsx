@@ -6,6 +6,7 @@ import FormExample from './lib/form/form.example';
 import DialogExample from './lib/dialog/dialog.example';
 import ButtonExample from './lib/button/button.example';
 import LayoutExample from './lib/layout/layout.example';
+import InputExample from './lib/input/input.example';
 import {Layout, Aside, Header, Content, Footer} from './lib/layout/layout'
 import './example.scss'
 
@@ -31,6 +32,9 @@ ReactDOM.render(
               <NavLink to="/button">Button</NavLink>
             </li>
             <li>
+              <NavLink to="/input">输入框</NavLink>
+            </li>
+            <li>
               <NavLink to="/dialog">Dialog</NavLink>
             </li>
             <li>
@@ -47,6 +51,7 @@ ReactDOM.render(
           <Route path="/dialog" component={DialogExample}/>
           <Route path="/layout" component={LayoutExample}/>
           <Route path="/form" component={FormExample}/>
+          <Route path="/input" component={InputExample}/>
         </Content>
       </Layout>
       <Footer className={"site-footer"}>
