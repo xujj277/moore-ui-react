@@ -1,23 +1,49 @@
 import React, { ReactElement } from 'react'
+import classes from '../helpers/classes'
+import Input from '../input/input'
+
+export interface FormValue {
+  [K: string]: any
+}
 
 interface Props {
-  value: {[K: string]: any}
+  value: FormValue
   fields: Array<{name: string, label: string, input: {type: string}}>
   buttons: ReactElement
+  errors: {[K: string]: string[]}
+  onSubmit: React.FormEventHandler<HTMLFormElement>
+  onChange: (value: FormValue) => void
 }
 
 const Form: React.FunctionComponent<Props> = (props) => {
+  const formData = props.value
+  const onSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
+    e.preventDefault()
+    props.onSubmit(e)
+  }
+  const onInputChange = (name: string, value: string) => {
+    const newFormValue = {...formData, [name]: value}
+    props.onChange(newFormValue)
+  }
   return (
-    <form>
-      {props.fields.map(i => 
-        <div key={i.name}>
-          {i.label}
-          <input type={i.input.type}/>
-        </div>
-      )}
-      <div>
-        {props.buttons}
-      </div>
+    <form onSubmit={onSubmit}>
+      <table>
+        {props.fields.map(i =>
+          <tr className={classes('moore-form-tr')} key={i.name}>
+            <td className="moore-form-td">
+              <span className="moore-form-label">{i.label}</span>
+            </td>
+            <td className="moore-form-td">
+              <Input className="moore-form-input"
+                     type={i.input.type}
+                     value={formData[i.name]}
+                     onChange={(e) => onInputChange(i.name, e.target.value)}
+              />
+              <div>{props.errors[i.name]}</div>
+            </td>
+          </tr>
+        )}
+      </table>
     </form>
   )
 }
