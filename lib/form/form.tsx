@@ -1,6 +1,7 @@
 import React, { ReactElement } from 'react'
 import classes from '../helpers/classes'
 import Input from '../input/input'
+import './form.scss'
 
 export interface FormValue {
   [K: string]: any
@@ -13,6 +14,7 @@ interface Props {
   errors: {[K: string]: string[]}
   onSubmit: React.FormEventHandler<HTMLFormElement>
   onChange: (value: FormValue) => void
+  errorsDisplayMode?: 'first' | 'all'
 }
 
 const Form: React.FunctionComponent<Props> = (props) => {
@@ -27,7 +29,8 @@ const Form: React.FunctionComponent<Props> = (props) => {
   }
   return (
     <form onSubmit={onSubmit}>
-      <table>
+      <table className="moore-form-table">
+        <tbody>
         {props.fields.map(i =>
           <tr className={classes('moore-form-tr')} key={i.name}>
             <td className="moore-form-td">
@@ -39,13 +42,29 @@ const Form: React.FunctionComponent<Props> = (props) => {
                      value={formData[i.name]}
                      onChange={(e) => onInputChange(i.name, e.target.value)}
               />
-              <div>{props.errors[i.name]}</div>
+              <div className="moore-form-error">{
+                props.errors[i.name] ?
+                  (props.errorsDisplayMode === 'first' ?
+                    props.errors[i.name][0] : props.errors[i.name].join()) :
+                  <span>&nbsp;</span>
+              } </div>
             </td>
           </tr>
         )}
+        <tr className="moore-form-tr">
+          <td className="moore-form-td"/>
+          <td className="moore-form-td">
+            {props.buttons}
+          </td>
+        </tr>
+        </tbody>
       </table>
     </form>
   )
 }
+
+Form.defaultProps = {
+  errorsDisplayMode: 'first'
+};
 
 export default Form
