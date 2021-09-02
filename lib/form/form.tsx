@@ -15,6 +15,7 @@ interface Props {
   onSubmit: React.FormEventHandler<HTMLFormElement>
   onChange: (value: FormValue) => void
   errorsDisplayMode?: 'first' | 'all'
+  transformError?: (message: string) => string
 }
 
 const Form: React.FunctionComponent<Props> = (props) => {
@@ -26,6 +27,14 @@ const Form: React.FunctionComponent<Props> = (props) => {
   const onInputChange = (name: string, value: string) => {
     const newFormValue = {...formData, [name]: value}
     props.onChange(newFormValue)
+  }
+  const transformError = (message: string) => {
+    const map: any = {
+      required: '必填',
+      minLength: '太短',
+      maxLength: '太长',
+    }
+    return props.transformError && props.transformError(message) || map[message] || '未知错误'
   }
   return (
     <form onSubmit={onSubmit}>
@@ -45,7 +54,7 @@ const Form: React.FunctionComponent<Props> = (props) => {
               <div className="moore-form-error">{
                 props.errors[i.name] ?
                   (props.errorsDisplayMode === 'first' ?
-                    props.errors[i.name][0] : props.errors[i.name].join()) :
+                    transformError!(props.errors[i.name][0]) : props.errors[i.name].map(transformError!).join()) :
                   <span>&nbsp;</span>
               } </div>
             </td>

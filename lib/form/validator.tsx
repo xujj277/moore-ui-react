@@ -37,33 +37,32 @@ const Validator = (formValue: FormValue, rules: FormRules, callback: (errors: an
   }
   rules.map(rule => {
     const value = formValue[rule.key]
+    if (rule.validator) {
+      const promise = rule.validator.validate(value)
+      addErrors(rule.key, {message: rule.validator.name, promise})
+    }
     if (rule.required && isEmpty(value)) {
-      addErrors(rule.key, {message: '必填'})
+      addErrors(rule.key, {message: 'required'})
     }
     if (rule.minLength && !isEmpty(value) && value!.length < rule.minLength) {
-      addErrors(rule.key, {message: '太短'})
+      addErrors(rule.key, {message: 'minLength'})
     }
     if (rule.maxLength && !isEmpty(value) && value!.length > rule.maxLength) {
-      addErrors(rule.key, {message: '太长'})
+      addErrors(rule.key, {message: 'maxLength'})
     }
     if (rule.pattern && !(rule.pattern.test(value))) {
-      addErrors(rule.key, {message: '格式不正确'})
+      addErrors(rule.key, {message: 'pattern'})
     }
   })
-  
-  const promiseList = flat(Object.values(errors)).filter(item => item.promise).map(item => item.promise);
-  Promise.all(promiseList)
-    .then(() => {
-      const newErrors = fromEntries(Object.keys(errors).map<[string, string[]]>(key => [key, errors[key].map((item: OneError) => item.message)]))
-      callback(newErrors);
-    }, () => {
-      const newErrors = fromEntries(
+
+  Promise.all(flat(Object.values(errors)).filter(item => item.promise).map(item => item.promise))
+    .finally(() => {
+      fromEntries(
         Object.keys(errors)
           .map<[string, string[]]>(key =>
             [key, errors[key].map((item: OneError) => item.message)]
-          ));
-      callback(newErrors);
-    });
+          ))
+    })
   return errors
 }
 
@@ -84,7 +83,7 @@ function fromEntries (array: Array<[string, string[]]>) {
   for (let i = 0; i < array.length; i++) {
     result[array[i][0]] = array[i][1]
   }
-  return result;
+  return result
 }
 
 export default Validator
