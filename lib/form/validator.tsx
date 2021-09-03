@@ -6,10 +6,7 @@ interface FormRule {
   minLength?: number
   maxLength?: number
   pattern?: RegExp
-  validator?: {
-    name: string,
-    validate: (value: string) => Promise<void>
-  }
+  validator?: (value: string) => Promise<string>
 }
 
 type FormRules = Array<FormRule>
@@ -22,13 +19,10 @@ export function noError (errors: any) {
   return Object.keys(errors).length === 0
 }
 
-interface OneError {
-  message: string;
-  promise?: Promise<any>;
-}
+type OneError = string | Promise<string>;
 
 const Validator = (formValue: FormValue, rules: FormRules, callback: (errors: any) => void): void => {
-  let errors: any = {}
+  let errors: { [key: string]: OneError[] } = {}
   const addErrors = (key: string, error: OneError) => {
     if (errors[key] === undefined) {
       errors[key] = []
@@ -38,32 +32,30 @@ const Validator = (formValue: FormValue, rules: FormRules, callback: (errors: an
   rules.map(rule => {
     const value = formValue[rule.key]
     if (rule.validator) {
-      const promise = rule.validator.validate(value)
-      addErrors(rule.key, {message: rule.validator.name, promise})
+      const promise = rule.validator(value)
+      addErrors(rule.key, promise)
     }
     if (rule.required && isEmpty(value)) {
-      addErrors(rule.key, {message: 'required'})
+      addErrors(rule.key, 'required')
     }
     if (rule.minLength && !isEmpty(value) && value!.length < rule.minLength) {
-      addErrors(rule.key, {message: 'minLength'})
+      addErrors(rule.key, 'minLength')
     }
     if (rule.maxLength && !isEmpty(value) && value!.length > rule.maxLength) {
-      addErrors(rule.key, {message: 'maxLength'})
+      addErrors(rule.key, 'maxLength')
     }
     if (rule.pattern && !(rule.pattern.test(value))) {
-      addErrors(rule.key, {message: 'pattern'})
+      addErrors(rule.key, 'pattern')
     }
   })
 
-  Promise.all(flat(Object.values(errors)).filter(item => item.promise).map(item => item.promise))
-    .finally(() => {
-      fromEntries(
-        Object.keys(errors)
-          .map<[string, string[]]>(key =>
-            [key, errors[key].map((item: OneError) => item.message)]
-          ))
-    })
-  return errors
+  const flattenErrors = flat(Object.keys(errors).map(key => errors[key].map((promise: any) => [key, promise])))
+  const newPromises = flattenErrors.map(([key, promiseOrString]) => (
+    promiseOrString instanceof Promise ? promiseOrString : Promise.reject(promiseOrString))
+    .then(() => [key, undefined], (reason) => [key, reason]));
+  Promise.all(newPromises).then(results => {
+    callback(zip(results.filter(item => item[1])));
+  })
 }
 
 function flat (array: Array<any>) {
@@ -78,11 +70,12 @@ function flat (array: Array<any>) {
   return result
 }
 
-function fromEntries (array: Array<[string, string[]]>) {
-  const result: { [key: string]: string[] } = {}
-  for (let i = 0; i < array.length; i++) {
-    result[array[i][0]] = array[i][1]
-  }
+function zip (arr: Array<[string, string]>) {
+  let result = {}
+  arr.map(([key, value]) => {
+    result[key] = result[key] || []
+    result[key].push(value)
+  })
   return result
 }
 

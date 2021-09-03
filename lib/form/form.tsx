@@ -1,3 +1,9 @@
+/*
+ * TODO:
+ * 1. 支持子字段编辑（子表单）
+ * 2. 支持更多的 type / 自定义的 input
+ * 3. 支持手机端
+ */
 import React, { ReactElement } from 'react'
 import classes from '../helpers/classes'
 import Input from '../input/input'

@@ -26,23 +26,19 @@ const FormExample: React.FunctionComponent = () => {
     {name: 'image', label: '头像', input: {type: 'text'}},
     {name: 'password', label: '密码', input: {type: 'password'}},
   ])
+  const validator = (username: string) => {
+    return new Promise<string>((resolve, reject) => {
+      checkUserName(username, resolve, () => reject('unique'))
+    })
+  }
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     const rules = [
       {key: 'username', required: true},
       {key: 'username', minLength: 8, maxLength: 16},
-      {
-        key: 'username', validator: {
-          name: 'unique',
-          validate (username: string) {
-            console.log('有人调用 validate 了！')
-            return new Promise<void>((resolve, reject) => {
-              checkUserName(username, resolve, reject)
-            })
-          }
-        }
-      },
+      {key: 'username', validator},
       {key: 'username', pattern: /^[A-Za-z0-9]+$/},
       {key: 'password', required: true},
+      {key: 'password', validator},
     ]
     Validator(formData, rules, (errors) => {
       setErrors(errors)
