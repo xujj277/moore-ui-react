@@ -49,29 +49,40 @@ const Validator = (formValue: FormValue, rules: FormRules, callback: (errors: an
     }
   })
 
-  const flattenErrors = flat(Object.keys(errors).map(key => errors[key].map((promise: any) => [key, promise])))
-  const newPromises = flattenErrors.map(([key, promiseOrString]) => (
-    promiseOrString instanceof Promise ? promiseOrString : Promise.reject(promiseOrString))
-    .then(() => [key, undefined], (reason) => [key, reason]));
+  function hasError (item: [string, undefined] | [string, string]): item is [string, string] {
+    return typeof item[1] === 'string' 
+  }
+  
+  const flattenErrors = flat(Object.keys(errors).map(
+    key => errors[key].map<[string, OneError]>(error => [key, error])
+  ))
+  
+  const newPromises = flattenErrors.map(
+    ([key, promiseOrString]) => {
+      const promise = promiseOrString instanceof Promise ? promiseOrString : Promise.reject(promiseOrString)
+      return promise.then<[string, undefined], [string, string]>(() => [key, undefined], (reason) => [key, reason])
+    }
+  )
+  
   Promise.all(newPromises).then(results => {
-    callback(zip(results.filter(item => item[1])));
+    callback(zip(results.filter<[string, string]>(hasError)))
   })
 }
 
-function flat (array: Array<any>) {
-  let result = []
+function flat<T> (array: Array<T | T[]>) {
+  let result: T[] = []
   for (let i = 0; i < array.length; i++) {
     if (array[i] instanceof Array) {
-      result.push(...array[i])
+      result.push(...array[i] as T[])
     } else {
-      result.push(array)
+      result.push(array[i] as T)
     }
   }
   return result
 }
 
 function zip (arr: Array<[string, string]>) {
-  let result = {}
+  let result: { [key: string]: string[] } = {}
   arr.map(([key, value]) => {
     result[key] = result[key] || []
     result[key].push(value)

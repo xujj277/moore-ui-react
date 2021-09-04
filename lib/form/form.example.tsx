@@ -28,7 +28,7 @@ const FormExample: React.FunctionComponent = () => {
   ])
   const validator = (username: string) => {
     return new Promise<string>((resolve, reject) => {
-      checkUserName(username, resolve, () => reject('unique'))
+      checkUserName(username, () => resolve, () => reject('unique'))
     })
   }
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
