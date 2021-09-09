@@ -9,17 +9,26 @@ const Scroll: React.FunctionComponent<Props> = (props) => {
   const [barHeight, setBarHeight] = useState(0)
   const [barTop, setBarTop] = useState(0)
   const containerRef = useRef<HTMLDivElement>(null)
+  const [barVisible, setBarVisible] = useState(false)
   useEffect(() => {
     const viewHeight = containerRef.current!.getBoundingClientRect().height
     const scrollHeight = containerRef.current!.scrollHeight
     setBarHeight(viewHeight * viewHeight / scrollHeight)
   }, [])
+  const timerIdRef = useRef<number | null>(null)
   const onScroll = () => {
+    setBarVisible(true)
     const {current} = containerRef
     const viewHeight = current!.getBoundingClientRect().height
     const scrollHeight = current!.scrollHeight
     const scrollTop = current!.scrollTop
     setBarTop(scrollTop * viewHeight / scrollHeight)
+    if (timerIdRef.current !== null) { 
+      window.clearTimeout(timerIdRef.current)
+    }
+    timerIdRef.current = window.setTimeout(() => {
+      setBarVisible(false)
+    }, 300)
   }
   const draggingRef = useRef(false)
   const firstYRef = useRef(0)
@@ -65,12 +74,14 @@ const Scroll: React.FunctionComponent<Props> = (props) => {
       >
         {children}
       </div>
+      {barVisible &&
       <div className={'moore-scroll-track'}>
         <div className={'moore-scroll-bar'}
              style={{height: barHeight, transform: `translateY(${barTop}px)`}}
              onMouseDown={onMouseDownBar}
         />
       </div>
+      }
     </div>
   )
 }
