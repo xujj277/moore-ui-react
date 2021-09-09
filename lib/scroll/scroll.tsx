@@ -1,4 +1,11 @@
-import React, { MouseEventHandler, UIEventHandler, useEffect, useRef, useState } from 'react'
+import React, {
+  MouseEventHandler,
+  TouchEventHandler,
+  UIEventHandler,
+  useEffect,
+  useRef,
+  useState
+} from 'react'
 import scrollbarWidth from './scrollbar-width'
 import './scroll.scss'
 
@@ -10,6 +17,7 @@ const Scroll: React.FunctionComponent<Props> = (props) => {
   const [barTop, _setBarTop] = useState(0)
   const containerRef = useRef<HTMLDivElement>(null)
   const [barVisible, setBarVisible] = useState(false)
+  const [translateY, setTranslateY] = useState(0)
   useEffect(() => {
     const viewHeight = containerRef.current!.getBoundingClientRect().height
     const scrollHeight = containerRef.current!.scrollHeight
@@ -32,7 +40,7 @@ const Scroll: React.FunctionComponent<Props> = (props) => {
     const scrollHeight = current!.scrollHeight
     const scrollTop = current!.scrollTop
     setBarTop(scrollTop * viewHeight / scrollHeight)
-    if (timerIdRef.current !== null) { 
+    if (timerIdRef.current !== null) {
       window.clearTimeout(timerIdRef.current)
     }
     timerIdRef.current = window.setTimeout(() => {
@@ -44,11 +52,9 @@ const Scroll: React.FunctionComponent<Props> = (props) => {
   const onMouseDownBar: MouseEventHandler = (e) => {
     draggingRef.current = true
     firstYRef.current = e.clientY
-    console.log(e)
   }
   const onMouseUpBar = () => {
     draggingRef.current = false
-    console.log(2)
   }
   const onMouseMoveBar = (e: MouseEvent) => {
     if (draggingRef.current) {
@@ -58,7 +64,6 @@ const Scroll: React.FunctionComponent<Props> = (props) => {
       const viewHeight = containerRef.current!.getBoundingClientRect().height
       const scrollHeight = containerRef.current!.scrollHeight
       containerRef.current!.scrollTop = scrollHeight * newBarTop / viewHeight
-      console.log(3)
     }
   }
   const onSelect = (e: Event) => {
@@ -75,11 +80,42 @@ const Scroll: React.FunctionComponent<Props> = (props) => {
       document.removeEventListener('selectstart', onSelect)
     }
   }, [])
+  const lastYRef = useRef(0)
+  const pulling = useRef(false)
+  // const moveCount = useRef(0) // 这个到底有什么用？？？
+  const onTouchStart: TouchEventHandler = (e) => {
+    const scrollTop = containerRef.current!.scrollTop
+    console.log(scrollTop)
+    if (scrollTop !== 0) return
+    pulling.current = true
+    lastYRef.current = e.touches[0].clientY
+    // moveCount.current = 0
+  }
+  const onTouchMove: TouchEventHandler = (e) => {
+    const delta = e.touches[0].clientY - lastYRef.current
+    // moveCount.current += 1
+    // if (moveCount.current === 1 && delta < 0) { // 表示是往下拖拽
+    if (delta < 0) {
+      pulling.current = false
+      return
+    }
+    if (!pulling.current) {return}
+    setTranslateY(translateY + delta)
+    lastYRef.current = e.touches[0].clientY
+    console.log(2)
+  }
+  const onTouchEnd: TouchEventHandler = (e) => {
+    setTranslateY(0)
+  }
   return (
     <div className={'moore-scroll'} {...restProps}>
-      <div className={'moore-scroll-inner'} style={{right: -scrollbarWidth()}}
+      <div className={'moore-scroll-inner'}
+           style={{right: -scrollbarWidth(), transform: `translateY(${translateY}px)`}}
            ref={containerRef}
            onScroll={onScroll}
+           onTouchStart={onTouchStart}
+           onTouchMove={onTouchMove}
+           onTouchEnd={onTouchEnd}
       >
         {children}
       </div>
@@ -91,6 +127,11 @@ const Scroll: React.FunctionComponent<Props> = (props) => {
         />
       </div>
       }
+      <div className="moore-scroll-pulling" style={{height: translateY}}>
+        {translateY === 150 ?
+          <span className="moore-scroll-pulling-text">释放手指即可更新</span> :
+          <span className="moore-scroll-pulling-icon">↓</span>}
+      </div>
     </div>
   )
 }
