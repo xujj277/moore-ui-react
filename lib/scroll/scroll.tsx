@@ -1,4 +1,4 @@
-import React, { MouseEventHandler, useEffect, useRef, useState } from 'react'
+import React, { MouseEventHandler, UIEventHandler, useEffect, useRef, useState } from 'react'
 import scrollbarWidth from './scrollbar-width'
 import './scroll.scss'
 
@@ -7,7 +7,7 @@ interface Props extends React.HTMLAttributes<HTMLElement> {}
 const Scroll: React.FunctionComponent<Props> = (props) => {
   const {children, ...restProps} = props
   const [barHeight, setBarHeight] = useState(0)
-  const [barTop, setBarTop] = useState(0)
+  const [barTop, _setBarTop] = useState(0)
   const containerRef = useRef<HTMLDivElement>(null)
   const [barVisible, setBarVisible] = useState(false)
   useEffect(() => {
@@ -15,8 +15,17 @@ const Scroll: React.FunctionComponent<Props> = (props) => {
     const scrollHeight = containerRef.current!.scrollHeight
     setBarHeight(viewHeight * viewHeight / scrollHeight)
   }, [])
+  const setBarTop = (number: number) => {
+    if (number < 0) return
+    const {current} = containerRef
+    const viewHeight = current!.getBoundingClientRect().height
+    const scrollHeight = current!.scrollHeight
+    const maxBarTop = (scrollHeight - viewHeight) * viewHeight / scrollHeight
+    if (number > maxBarTop) return
+    _setBarTop(number)
+  }
   const timerIdRef = useRef<number | null>(null)
-  const onScroll = () => {
+  const onScroll: UIEventHandler = () => {
     setBarVisible(true)
     const {current} = containerRef
     const viewHeight = current!.getBoundingClientRect().height
@@ -28,7 +37,7 @@ const Scroll: React.FunctionComponent<Props> = (props) => {
     }
     timerIdRef.current = window.setTimeout(() => {
       setBarVisible(false)
-    }, 300)
+    }, 1000)
   }
   const draggingRef = useRef(false)
   const firstYRef = useRef(0)
