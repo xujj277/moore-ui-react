@@ -9,10 +9,12 @@ import React, {
 import scrollbarWidth from './scrollbar-width'
 import './scroll.scss'
 
-interface Props extends React.HTMLAttributes<HTMLElement> {}
+interface Props extends React.HTMLAttributes<HTMLElement> {
+  onPull?: () => void
+}
 
 const Scroll: React.FunctionComponent<Props> = (props) => {
-  const {children, ...restProps} = props
+  const {children, onPull, ...restProps} = props
   const [barHeight, setBarHeight] = useState(0)
   const [barTop, _setBarTop] = useState(0)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -105,10 +107,14 @@ const Scroll: React.FunctionComponent<Props> = (props) => {
     console.log(2)
   }
   const onTouchEnd: TouchEventHandler = (e) => {
-    setTranslateY(0)
+    if (pulling.current) {
+      setTranslateY(0)
+      onPull && onPull();
+      pulling.current = false;
+    }
   }
   return (
-    <div className={'moore-scroll'} {...restProps}>
+    <div className={'moore-scroll'} {...restProps} {...onPull}>
       <div className={'moore-scroll-inner'}
            style={{right: -scrollbarWidth(), transform: `translateY(${translateY}px)`}}
            ref={containerRef}
