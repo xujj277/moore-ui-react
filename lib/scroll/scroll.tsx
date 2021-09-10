@@ -84,27 +84,25 @@ const Scroll: React.FunctionComponent<Props> = (props) => {
   }, [])
   const lastYRef = useRef(0)
   const pulling = useRef(false)
-  // const moveCount = useRef(0) // 这个到底有什么用？？？
+  const moveCount = useRef(0) // 每次下来都可以拖拽
   const onTouchStart: TouchEventHandler = (e) => {
     const scrollTop = containerRef.current!.scrollTop
     console.log(scrollTop)
     if (scrollTop !== 0) return
     pulling.current = true
     lastYRef.current = e.touches[0].clientY
-    // moveCount.current = 0
+    moveCount.current = 0
   }
   const onTouchMove: TouchEventHandler = (e) => {
     const delta = e.touches[0].clientY - lastYRef.current
-    // moveCount.current += 1
-    // if (moveCount.current === 1 && delta < 0) { // 表示是往下拖拽
-    if (delta < 0) {
+    moveCount.current += 1
+    if (moveCount.current === 1 && delta < 0) { // 表示是往下拖拽
       pulling.current = false
       return
     }
     if (!pulling.current) {return}
     setTranslateY(translateY + delta)
     lastYRef.current = e.touches[0].clientY
-    console.log(2)
   }
   const onTouchEnd: TouchEventHandler = (e) => {
     if (pulling.current) {
