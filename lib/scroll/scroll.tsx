@@ -84,10 +84,9 @@ const Scroll: React.FunctionComponent<Props> = (props) => {
   }, [])
   const lastYRef = useRef(0)
   const pulling = useRef(false)
-  const moveCount = useRef(0) // 每次下来都可以拖拽
+  const moveCount = useRef(0) // 每次下来都可以拖拽，第一次的时候不是下拉，第二次才是
   const onTouchStart: TouchEventHandler = (e) => {
     const scrollTop = containerRef.current!.scrollTop
-    console.log(scrollTop)
     if (scrollTop !== 0) return
     pulling.current = true
     lastYRef.current = e.touches[0].clientY
@@ -96,7 +95,7 @@ const Scroll: React.FunctionComponent<Props> = (props) => {
   const onTouchMove: TouchEventHandler = (e) => {
     const delta = e.touches[0].clientY - lastYRef.current
     moveCount.current += 1
-    if (moveCount.current === 1 && delta < 0) { // 表示是往下拖拽
+    if (moveCount.current === 1 && delta < 0) { // 表示不是往下拖拽 
       pulling.current = false
       return
     }
