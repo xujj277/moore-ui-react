@@ -7,7 +7,7 @@ const CitySelectExample: React.FC = () => {
     <div>
       <div>
         <h2>第一个例子</h2>
-        <CitySelect dataSource={cityList} onChange={() => {console.log(1)}}>选择城市</CitySelect>
+        <CitySelect dataSource={cityList} onChange={(cityName) => {console.log(cityName)}}>选择城市</CitySelect>
       </div>
     </div>
   );

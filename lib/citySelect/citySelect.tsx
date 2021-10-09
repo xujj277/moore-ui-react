@@ -4,13 +4,13 @@ import './citySelect.scss'
 import pinyin from 'tiny-pinyin';
 
 interface Props {
-  dataSource: string[];
-  onChange: (value: string) => void;
+  dataSource: string[]
+  onChange: (value: string) => void
 }
 
 interface Context {
-  map: { [key: string]: string[] },
-  onChange: (value: string) => void,
+  map: {[key: string]: string[]}
+  onChange: (value: string) => void
   setDialogVisible: Dispatch<SetStateAction<boolean>>
 }
 
@@ -29,12 +29,9 @@ const CitySelect: React.FC<Props> = (props) => {
     }
     map[index].push(city)
   })
-  const onClick = () => {
-    setDialogVisible(true)
-  }
   return (
     <CitySelectContext.Provider value={{map, onChange: props.onChange, setDialogVisible}}>
-      <div onClick={onClick}>{props.children}</div>
+      <div onClick={() => setDialogVisible(true)}>{props.children}</div>
       {dialogVisible && <Dialog onClose={() => setDialogVisible(false)}></Dialog>}
     </CitySelectContext.Provider>
   )
@@ -47,7 +44,6 @@ const Dialog: React.FC<{ onClose: () => void } > = (props) => {
   const onClick = (city: string) => {
     onChange(city)
   }
-  console.log(indexList)
   return ReactDOM.createPortal((
     <div className="moore-citySelect-dialog">
       <header>
@@ -64,7 +60,7 @@ const Dialog: React.FC<{ onClose: () => void } > = (props) => {
         return (
           <div key={letter} className="moore-citySelect-citySection">
             <h4 data-letter={letter}>{letter}</h4>
-            {list.map(city => 
+            {list.map(city =>
               <div className="moore-citySelect-cityName" key={city}
                    onClick={() => onClick(city)}
               >
@@ -91,7 +87,7 @@ const CurrentLocation: React.FC = () => {
     xhr.onerror = () => {
       setCity('未知')
     }
-    xhr.send();
+    xhr.send()
   }, [])
   return (
     <div className="currentCity">
